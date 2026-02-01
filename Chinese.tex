@@ -1,0 +1,706 @@
+% !TEX TS-program = xelatex
+% !TEX encoding = UTF-8
+% \special{dvipdfmx:config z 0} % 禁用压缩，加速编译
+\documentclass[12pt,a4paper]{ctexart} % 文档类及其参数
+\usepackage[a4paper,hmargin=1cm,top=2.5cm,bottom=1.5cm]{geometry} % 页边距
+\usepackage{wallpaper} % 封面背景
+% \usepackage{enumitem}\setlist{nosep} % 取消有序和无序列表的行距
+\usepackage{xcolor} % 彩色文字
+\setlength{\fboxsep}{0pt} % 取消彩色盒子的内边距
+% \usepackage{amsmath}\usepackage{amssymb}\usepackage{amsthm} % 数学模式
+
+% \usepackage{cradle} % 自定义的摇篮文宏包（它隐式依赖 TikZ 绘图语言宏包），本文暂不需要
+
+\usepackage{graphicx} % 插图功能
+\usepackage{hyperref} % 超链接
+
+%\usepackage{xpatch} % 配合下一行来消除 Package xeCJK Warning: Redefining CJKfamily `\CJKsfdefault' 的警告
+%\ExplSyntaxOn\xpatchcmd\__xeCJK_check_family:n{\__xeCJK_warning:nxx}{\__xeCJK_info:nxx}{}{}\ExplSyntaxOff
+\setCJKsansfont{logo_type_gothic.otf} % 设置\textsf{日文}的字体，这里是AiC的对话字体
+
+\newfontfamily\PUAfont{Alice.ttf} % 重要！自定义的矮人语字体
+
+% \setlength{\parindent}{0pt} % 取消段落首行缩进
+\title{\Huge\bfseries\textit{Alice In Cradle} 0.29 WPE 矮人语分析报告}
+\author{\LARGE\textsf{イクチュ}} % 普莉姆拉老师
+\date{\LARGE\bfseries\today} % 标题、作者、日期
+
+\begin{document} % 正文开始
+\ThisCenterWallPaper{1}{Figs/Others/frontcover.png}
+{\color{white}\maketitle} % 标题页
+\clearpage
+\CenterWallPaper{1}{Figs/Others/frame.png}
+\tableofcontents % 目录
+\clearpage
+\section*{摘要}\addcontentsline{toc}{section}{摘要}
+在\textbf{Hinayua}和\textsf{橋野みずは}开发的轻度Ryona类银河恶魔城游戏\textit{Alice In Cradle}的0.29 Weplay Expo先行试玩版中，新角色爱丽丝的台词使用了作者自创的一种方形表意文字来书写。本文以作者自己的试玩流程直播回放为基础，结合0.27和0.28的游戏程序和素材，运用相关的语言学知识和逻辑推理，分析了这种文字的含义和部分发音，以期帮助玩家在0.29开放下载前对这种文字有所了解，并读懂爱丽丝和主角诺艾儿的对话。
+
+\textbf{关键词}：语言学，表意文字，爱丽丝，摇篮，矮人语
+\section{引言}
+\textit{Alice In Cradle}（AiC）已于2025年11月22日在上海的Weplay Expo展会提供了0.29版的先行试玩（本文称为 0.29 WPE），并于次日晚间由作者\textsf{橋野みずは}亲自直播试玩了\textsf{日本語版}和简体中文版的``拓荒者山岳''地图全流程\footnote{回放链接为 \url{https://www.bilibili.com/video/BV1gbUTB4EAG} 和 \url{https://www.youtube.com/watch?v=asaNYN9ZFOI}}，本文的所有语料以及目录中的时间轴数据都将基于该视频，务请注意。
+
+在拓荒者山岳，玩家操作的女主角\textbf{诺艾儿}对窃取了武器库中\textbf{魔法注册终端}的嫌疑人\textbf{爱丽丝}展开追捕，并与之进行了大量语言不通的对话。爱丽丝所用的语言在游戏文件中被称为\texttt{character\_dwarf}，目前社区暂称其为``矮人语''。不同于之前已经几乎研究完全的``摇篮文''是书写系统层面上简单的数字和拉丁字母替换，矮人语是一门人造的表意文字语言，基本语序是主谓宾。由于游戏没有对话语音，因此本文对其的发音分析将从另一个角度出发。
+\subsection{置信水平}
+本文对矮人语不同语料给出的分析有不同的置信水平，用颜色区分：\\
+\colorbox{green!25}{安全}：此分析基于已公开的旧版游戏程序和素材，除非作者自己日后推翻它，否则不会出错。\\
+\colorbox{orange!25}{可疑}：此分析基于直播回放中的多处语料交叉验证，能够自洽，但仍不排除其他可能。\\
+\colorbox{red!25}{危险}：此分析没有足够多的语料来交叉验证，比如从多种可能性中凭直觉猜测一种。如果你有更好的想法，那多半是你对。
+
+本文的大部分分析都是\colorbox{orange!25}{可疑}的，因为我们毕竟没有0.29 WPE的游戏程序。
+\subsection{旧版游戏程序和素材中的参考资料}
+在0.27中首次出现了名为\texttt{character\_dwarf}的素材文件，其中包含图2所示的手稿。在0.28中爱丽丝首次有了台词，研究发现下面的事件指令可以显示出图1所示的内容。
+\clearpage
+\begin{verbatim}
+<LOAD_DWARF> // 加载字体
+PIC_FILL #0 0xFFE6E3DB // 设置全屏背景方便截图
+HKDS a '' '' WIDE // 加宽爱丽丝的对话框
+MSG a_<<<EOF
+  <big>すりあいうえおかきくこそはわび ? !</big>
+       す　り　あ　い　う　え　お　か　き　く　こ　そ　は　わ　び　?　!
+<dwarf>す　り　あ　い　う　え　お　か　き　く　こ　そ　は　わ　び　?　!
+EOF;
+MSG_HOLD // 防止对话框自动消失
+WAIT_BUTTON // 等待玩家按键
+\end{verbatim}
+\begin{figure}[h]\centering\includegraphics[scale=0.5]{Figs/Others/028table.png}\caption{0.28实装的矮人语字符和平假名对照}\end{figure}
+
+图2的手稿有很多字符（或其部件）出现在了0.29 WPE中（部分有一定差异，如{\PUAfont\symbol{"0126}}和{\PUAfont\symbol{"014D}}），而且手稿中给出了很多字符的释义和``发音''（实际上是在对话文件中的原始字符串）。比如{\PUAfont\symbol{"010B}}就和手稿中表示``杀''的符号很相似，因此推断为``攻击、伤害、杀死''这类含义，发音为\textsf{ろ}。本文会把这份手稿作为``可信锚点''，从它出发推导出一系列字符的释义。
+
+图1这份不完整的对照表就更有趣了，前三个字符\textsf{ありす}（爱丽丝）自不必说，后面的字符也能根据形状和发音推出个八九不离十。比如四个很明显的代词{\PUAfont\symbol{"011D}\symbol{"0120}\symbol{"014D}\symbol{"0125}}分别读作\textsf{わ、き、こ、そ}，意思是``我、你、这、那''。
+\begin{figure}[p]\centering\includegraphics[scale=0.9]{Figs/Others/027draft.png}\caption{0.27的矮人语手稿}\end{figure}
+\clearpage
+\section{字符和词汇}
+\begin{center}
+\begin{tabular}{ll}
+\hline
+字形 & 码点\\
+\hline
+{\PUAfont\symbol{"0100}} & 0100\\
+{\PUAfont\symbol{"0101}} & 0101\\
+{\PUAfont\symbol{"0102}} & 0102\\
+{\PUAfont\symbol{"0103}} & 0103\\
+{\PUAfont\symbol{"0104}} & 0104\\
+{\PUAfont\symbol{"0105}} & 0105\\
+{\PUAfont\symbol{"0148}} & 0148\\
+{\PUAfont\symbol{"0106}} & 0106\\
+{\PUAfont\symbol{"0107}} & 0107\\
+{\PUAfont\symbol{"0108}} & 0108\\
+{\PUAfont\symbol{"0109}} & 0109\\
+{\PUAfont\symbol{"010A}} & 010A\\
+{\PUAfont\symbol{"010B}} & 010B\\
+{\PUAfont\symbol{"010C}} & 010C\\
+{\PUAfont\symbol{"010D}} & 010D\\
+{\PUAfont\symbol{"010E}} & 010E\\
+{\PUAfont\symbol{"010F}} & 010F\\
+{\PUAfont\symbol{"0153}} & 0153\\
+{\PUAfont\symbol{"0110}} & 0110\\
+{\PUAfont\symbol{"0111}} & 0111\\
+{\PUAfont\symbol{"0112}} & 0112\\
+{\PUAfont\symbol{"0113}} & 0113\\
+\hline
+\end{tabular}
+\qquad
+\begin{tabular}{ll}
+\hline
+字形 & 码点\\
+\hline
+{\PUAfont\symbol{"0115}} & 0115\\
+{\PUAfont\symbol{"0116}} & 0116\\
+{\PUAfont\symbol{"014B}} & 014B\\
+{\PUAfont\symbol{"014C}} & 014C\\
+{\PUAfont\symbol{"0117}} & 0117\\
+{\PUAfont\symbol{"0118}} & 0118\\
+{\PUAfont\symbol{"0119}} & 0119\\
+{\PUAfont\symbol{"011A}} & 011A\\
+{\PUAfont\symbol{"011B}} & 011B\\
+{\PUAfont\symbol{"011C}} & 011C\\
+{\PUAfont\symbol{"011D}} & 011D\\
+{\PUAfont\symbol{"0150}} & 0150\\
+{\PUAfont\symbol{"011E}} & 011E\\
+{\PUAfont\symbol{"011F}} & 011F\\
+{\PUAfont\symbol{"0120}} & 0120\\
+{\PUAfont\symbol{"0121}} & 0121\\
+{\PUAfont\symbol{"014E}} & 014E\\
+{\PUAfont\symbol{"0122}} & 0122\\
+{\PUAfont\symbol{"0123}} & 0123\\
+{\PUAfont\symbol{"0124}} & 0124\\
+{\PUAfont\symbol{"0125}} & 0125\\
+{\PUAfont\symbol{"014A}} & 014A\\
+\hline
+\end{tabular}
+\qquad
+\begin{tabular}{ll}
+\hline
+字形 & 码点\\
+\hline
+{\PUAfont\symbol{"0126}} & 0126\\
+{\PUAfont\symbol{"0127}} & 0127\\
+{\PUAfont\symbol{"0128}} & 0128\\
+{\PUAfont\symbol{"014D}} & 014D\\
+{\PUAfont\symbol{"014F}} & 014F\\
+{\PUAfont\symbol{"0129}} & 0129\\
+{\PUAfont\symbol{"012A}} & 012A\\
+{\PUAfont\symbol{"012B}} & 012B\\
+{\PUAfont\symbol{"012C}} & 012C\\
+{\PUAfont\symbol{"0149}} & 0149\\
+{\PUAfont\symbol{"012D}} & 012D\\
+{\PUAfont\symbol{"012E}} & 012E\\
+{\PUAfont\symbol{"012F}} & 012F\\
+{\PUAfont\symbol{"0130}} & 0130\\
+{\PUAfont\symbol{"0131}} & 0131\\
+{\PUAfont\symbol{"0132}} & 0132\\
+{\PUAfont\symbol{"0133}} & 0133\\
+{\PUAfont\symbol{"0134}} & 0134\\
+{\PUAfont\symbol{"0135}} & 0135\\
+{\PUAfont\symbol{"0136}} & 0136\\
+{\PUAfont\symbol{"0147}} & 0147\\
+{\PUAfont\symbol{"0137}} & 0137\\
+\hline
+\end{tabular}
+\qquad
+\begin{tabular}{ll}
+\hline
+字形 & 码点\\
+\hline
+{\PUAfont\symbol{"0138}} & 0138\\
+{\PUAfont\symbol{"0139}} & 0139\\
+{\PUAfont\symbol{"013A}} & 013A\\
+{\PUAfont\symbol{"013B}} & 013B\\
+{\PUAfont\symbol{"013C}} & 013C\\
+{\PUAfont\symbol{"013D}} & 013D\\
+{\PUAfont\symbol{"013E}} & 013E\\
+{\PUAfont\symbol{"013F}} & 013F\\
+{\PUAfont\symbol{"0140}} & 0140\\
+{\PUAfont\symbol{"0141}} & 0141\\
+{\PUAfont\symbol{"0142}} & 0142\\
+{\PUAfont\symbol{"0154}} & 0154\\
+{\PUAfont\symbol{"0143}} & 0143\\
+{\PUAfont\symbol{"0144}} & 0144\\
+{\PUAfont\symbol{"0145}} & 0145\\
+{\PUAfont\symbol{"0146}} & 0146\\
+{\PUAfont\symbol{"0151}} & 0151\\
+{\PUAfont\symbol{"0152}} & 0152\\
+{\PUAfont\symbol{"017E}} & 017E\\
+{\PUAfont\symbol{"017F}} & 017F\\
+\\
+\\
+\hline
+\end{tabular}
+\end{center}
+
+由于0.29 WPE没有公开的游戏程序，我们无从得知上面列出字形的完整性以及在对话文件中的原始字符串。这些字形全部由用户\texttt{Dream\_Ruthenium}对照视频自行绘制点阵（16×16），并借用Unicode拉丁扩展A区编码来制作字体在pdf文件中显示。
+
+若要在\LaTeX{}中输入矮人语，需要将字体文件Alice.ttf放置在tex文件同目录下，
+先在导言区使用 \texttt{\char92newfontfamily\char92PUAfont\{Alice.ttf\}}
+再在正文中使用\texttt{\{\char92PUAfont\char92symbol\{"xxxx\}\}}即可，其中\texttt{xxxx}为四位十六进制码点。例如\texttt{\{\char92PUAfont\char92symbol\{"0117\}\}}会得到字符{\PUAfont\symbol{"0117}}，发音为``ha''。
+
+在视频中某些字符以斜体出现，因为肉眼难以辨认，（即便确认是同一字符的）斜体和非斜体在上表中仍用不同的码点表示。斜体主要的用途之一是专有名词，如爱丽丝和她的魔族宠物的名字。
+
+在视频中某些对话有文字动效，这可能导致同一字符被误判为两个，例如{\PUAfont\symbol{"0125}}和{\PUAfont\symbol{"014A}}就无法断言是否为同一字符，暂且用不同的码点表示。
+\subsection{发音}
+我们在0.28的resources.assets文件中找到了名为dwarf的资源，根据其内容结合图1整理出了部分发音，用罗马字标记如下：
+\begin{center}
+\begin{tabular}{llll}
+字形 & 发音 & 释义 & 备注\\
+\hline
+{\PUAfont\symbol{"014E}} & su & 素 & 正体\\
+{\PUAfont\symbol{"0138}} & su & 丝 & 斜体\\
+{\PUAfont\symbol{"010F}} & ri & 丽、理解 & \textsf{りかい}\\
+{\PUAfont\symbol{"011B}} & a & 爱、恶 & \textsf{あい・あく}\\
+{\PUAfont\symbol{"0149}} & i & 良好 & \textsf{いい}\\
+{\PUAfont\symbol{"012C}} & u & 喜悦 & \textsf{うれしい}\\
+{\PUAfont\symbol{"0121}} & e & 精灵、编织者 & \textsf{エルフ}\\
+{\PUAfont\symbol{"014C}} & o & 恐惧 & \textsf{おそれる}\\
+{\PUAfont\symbol{"014B}} & ka & 感到 & \textsf{かんじる}\\
+{\PUAfont\symbol{"0120}} & ki & 你 & \textsf{きみ}\\
+{\PUAfont\symbol{"010C}} & ku & 来 & \textsf{くる}\\
+{\PUAfont\symbol{"014D}} & ko & 这 & \textsf{此}\\
+{\PUAfont\symbol{"014F}} & so & 那 & \textsf{其}\\
+{\PUAfont\symbol{"0117}} & ha & 心 & \textsf{ハート}\\
+{\PUAfont\symbol{"011D}} & wa & 我 & \textsf{わたし}\\
+{\PUAfont\symbol{"0152}} & bi & 连系动词 & 英语的be\\
+{\PUAfont\symbol{"0119}} & hi & 悲伤 & 图2手稿\\
+{\PUAfont\symbol{"0109}} & si & 忍受 & 图2手稿\\
+{\PUAfont\symbol{"0139}} & do & 过去式/被动 & 图2手稿\\
+{\PUAfont\symbol{"010B}} & \colorbox{orange!25}{ro} & 杀伤 & 图2手稿\\
+\hline
+\end{tabular}
+\end{center}
+其中{\PUAfont\symbol{"010B}}的发音来自\textsf{ころす}的第二个音节，有些可疑。
+\subsection{标点符号}
+1. {\PUAfont\symbol{"017F}}：\colorbox{green!25}{感叹号``!''，用于非疑问句结尾。}
+
+2. {\PUAfont\symbol{"0102}}：\colorbox{green!25}{问号``?''，用于疑问句\textbf{开头}，疑问句结尾没有标点符号。}
+
+3. {\PUAfont\symbol{"017E}}：\colorbox{green!25}{省略号``…''，用于表示话音延长或中断，常搭配感叹词使用。}
+
+4. {\PUAfont\symbol{"0104}}：\colorbox{red!25}{可能是``!?''的组合，表示惊讶之下的反问。}
+
+5. {\PUAfont\symbol{"0103}}{\PUAfont \symbol{"0104}}：\colorbox{red!25}{难道、该不会……（\textsf{まさか・もしかして}）。}
+\subsection{感叹词}
+感叹词由这些字符中的一个或多个组合而成：{\PUAfont\symbol{"0118}\symbol{"0119}\symbol{"0135}\symbol{"012C}\symbol{"0117}\symbol{"0137}}，常搭配省略号使用。虽然根据语料很容易判断出它们，但是要想知道发音就不太容易了。下面是一些可能的推测：
+
+1. {\PUAfont\symbol{"012C}\symbol{"0117}\symbol{"0117}\symbol{"0117}}：\colorbox{green!25}{放声大笑，读作``唔哈哈哈''。}
+
+2. {\PUAfont\symbol{"0119}\symbol{"010C}\symbol{"010C}}：\colorbox{green!25}{轻声笑，读作\textsf{ひくく}。}
+
+3. {\PUAfont\symbol{"0119}\symbol{"0135}\symbol{"0135}\symbol{"0135}\symbol{"0135}\symbol{"0135}}、{\PUAfont\symbol{"0135}\symbol{"0119}}、{\PUAfont\symbol{"0135}\symbol{"017E}\symbol{"017E}}：注意到这两个字符即使调换顺序也能表达相同的含义（惊吓和恐惧），并且{\PUAfont\symbol{"0119}}不会重复出现。\colorbox{green!25}{图2手稿表明{\PUAfont\symbol{"0119}}读作\textsf{ひ}，}\colorbox{orange!25}{{\PUAfont\symbol{"0135}}可能读作``啊'',组合使用时前者用于延长话音？}
+
+4. {\PUAfont\symbol{"0118}\symbol{"0118}\symbol{"0118}}：被框起来的心形表示非常痛苦的情绪，\colorbox{red!25}{所以应该是放声大哭，读作``哇啊啊啊''}。
+
+5. {\PUAfont\symbol{"013A}\symbol{"017E}\symbol{"017E}}：\colorbox{red!25}{可能是``呃……''，表示一时语塞、痛苦的呻吟、疲劳的喘息等。}
+\subsection{代词}
+除了之前提到的第一和第二人称代词{\PUAfont\symbol{"011D}\symbol{"0120}}（\textsf{私・君}）以及两个指示代词{\PUAfont\symbol{"014D}\symbol{"014F}}（\textsf{此・其}），从爱丽丝指着诺艾儿身后的魔法注册终端时所说的话推断，\colorbox{orange!25}{可能还存在第三个指示代词{\PUAfont\symbol{"0132}}（\textsf{彼}）}\footnote{日语的\textsf{此、其、彼、何}分别表示``离说话人近、离听话人近、离两人都远、特殊疑问词''，称为\textsf{こそあど言葉}。}。
+
+更多的则是疑问代词，它们由一个{\PUAfont\symbol{"0130}}（因为它常紧跟着问号出现）加上一个类型后缀得到。
+
+1. {\PUAfont\symbol{"0130}\symbol{"011C}}：\colorbox{orange!25}{这个长得像旗帜的在人称代词中出现过，所以是在问``谁''（\textsf{どなた・だれ}）}。
+
+2. {\PUAfont\symbol{"0130}\symbol{"0127}}：\colorbox{red!25}{只出现了一次，根据语境猜测为``怎么会这样''（how）}。
+
+3. {\PUAfont\symbol{"0130}\symbol{"013C}}：\colorbox{orange!25}{长得像书，一共出现了两次，似乎是爱丽丝在问诺艾儿想表达``什么意思''（\textsf{何意味}）。}
+
+4. {\PUAfont\symbol{"0130}\symbol{"0128}}：\colorbox{green!25}{土字头（有的是七字头）的字符普遍和地点有关，因此含义是``何处''。}
+
+5. {\PUAfont\symbol{"0130}\symbol{"0143}}：\colorbox{orange!25}{所在句子似乎是爱丽丝在问诺艾儿``为什么''不伤害她。}
+
+6. {\PUAfont\symbol{"0130}\symbol{"0134}}：\colorbox{orange!25}{第二个符号可能是``从''或者``到''，也可能表达充分或必要条件，所以可能是问范围。}
+
+7. {\PUAfont\symbol{"0130}}：\colorbox{orange!25}{这个符号或许可以单独使用，用于一般疑问句，相当于``是吗''。}
+\subsection{副词}
+1. {\PUAfont\symbol{"011E}}：\colorbox{orange!25}{多处语料表明这个字符在句子中表示请求（please、\textsf{ください}）。}
+
+2. {\PUAfont\symbol{"0118}}：\colorbox{orange!25}{在动词之后出现时，该动词一般都是爱丽丝``想做''（wanna、\textsf{たがる}）的事情。}
+\subsection{动词}
+\noindent 动词的顶部都是``根号''的形状。
+
+1. {\PUAfont\symbol{"0105}}\\
+\colorbox{orange!25}{单独出现的根号能是什么呢，只能是基本动词``做、进行''了（\textsf{する・します}）。}
+
+2. {\PUAfont\symbol{"014B}}\\
+\colorbox{green!25}{发音表指出其含义是``感觉、感到''。}
+
+3. {\PUAfont\symbol{"0111}}\\
+\colorbox{orange!25}{多处语料表明它的含义是``靠近''}，而且也确实和{\PUAfont\symbol{"0126}}（``这''的旧字形？）有共用部件。
+
+4. {\PUAfont\symbol{"010B}}\\
+\colorbox{green!25}{图2手稿表明其含义是``攻击、伤害、杀死''之类。}
+
+5. {\PUAfont\symbol{"0146}}\\
+\colorbox{orange!25}{共出现两次，分别是``那''之前和``我''之前，结合下方部件，推测为``远离''。}
+
+6. {\PUAfont\symbol{"010D}}\\
+\colorbox{orange!25}{爱丽丝指着魔法注册终端时说出的词，示意诺艾儿回头``看''。}
+
+7. {\PUAfont\symbol{"0106}}\\
+\colorbox{orange!25}{多处出现，但是含义比较抽象，一位群友认为可能表示``相信、认为''。}
+
+8. {\PUAfont\symbol{"010A}}\\
+\colorbox{green!25}{图2手稿表明其含义是``战斗、敌对''等}，手稿同时指出其发音可能是to（来自\textsf{せんとう}，感觉不是很靠谱）。
+
+9. {\PUAfont\symbol{"0107}}\\
+\colorbox{orange!25}{有两处关键语料（刚被诺艾儿追上时、请求诺艾儿的信任时），据此推断为``追逐、寻找''。}
+
+10. {\PUAfont\symbol{"0108}}\\
+\colorbox{red!25}{下方部件比起{\PUAfont\symbol{"010A}}由轴对称变成了中心对称，因此推测为``和解、结盟''等友好含义。}
+
+11. {\PUAfont\symbol{"010C}}\\
+\colorbox{green!25}{发音表指出其含义是``来''。}当然，作为日语唯一的\textsf{カ変動詞}，说不定会以多种形状出现。
+
+12. {\PUAfont\symbol{"010E}}\\
+\colorbox{green!25}{根据图2手稿，含义是``持有''，读作mo.}
+
+13. {\PUAfont\symbol{"0153}}\\
+\colorbox{orange!25}{出现在两人告别时，爱丽丝``理解''了诺艾儿是要放她走。}
+
+14. {\PUAfont\symbol{"0110}}\\
+\colorbox{orange!25}{从出现的几处语料推断，可能表示``传达、表达''。}
+
+15. {\PUAfont\symbol{"0112}}\\
+\colorbox{red!25}{爱丽丝在想要寻找自己的宠物时多次说出这个动词，含义也许是``逃出''。}
+
+16. {\PUAfont\symbol{"0113}}\\
+\colorbox{red!25}{只出现在两人告别时，目前无从知晓其含义。}
+
+17. {\PUAfont\symbol{"0115}}\\
+\colorbox{red!25}{这里诺艾儿在问爱丽丝的名字，所以爱丽丝可能是在反问她要``质问''什么。}
+
+18. {\PUAfont\symbol{"0116}}\\
+\colorbox{red!25}{只出现在两人告别时，目前无从知晓其含义。}
+
+19. {\PUAfont\symbol{"014C}}\\
+\colorbox{green!25}{发音表指出其含义是``害怕''。}
+\subsection{形容词}
+1. {\PUAfont\symbol{"0149}}\\
+\colorbox{green!25}{发音表指出其含义是``良好''。}
+
+2. {\PUAfont\symbol{"011F}}\\
+\colorbox{red!25}{这个跟{\PUAfont\symbol{"0149}}（良好）只有上方部件的朝向和是否空心不同，或许是一对反义词吧。}
+
+3. {\PUAfont\symbol{"0122}}\\
+\colorbox{red!25}{只出现一次，是爱丽丝信任诺艾儿之后对她的否定陈述，也许在说她不是``邪恶的''。}
+
+4. {\PUAfont\symbol{"0129}}\\
+\colorbox{red!25}{出现在宠物对诺艾儿使用拘束攻击时，爱丽丝说``请不要战斗……''，因此这个词可能指``危险''。}
+\subsection{名词}
+\noindent 1. {\PUAfont\symbol{"0101}\symbol{"0148}\symbol{"0147}}：\colorbox{green!25}{爱丽丝的魔族宠物的名字，发音未知。}\\
+2. {\PUAfont\symbol{"011B}\symbol{"010F}\symbol{"0138}}：\colorbox{green!25}{爱丽丝的名字，也是发音。}\\
+3. {\PUAfont\symbol{"0121}}：\colorbox{green!25}{发音表指出其含义是``精灵、编织者''。}\\
+4. {\PUAfont\symbol{"0123}}：\colorbox{orange!25}{看上去和图2手稿中的``魔族''（读作ma）相近，但毕竟有差别，所以不能完全肯定。}\\
+5. {\PUAfont\symbol{"0136}}：\colorbox{orange!25}{这个字符作为{\PUAfont\symbol{"0108}}的部件，而且用于宠物的名字，因此认为是``朋友、伙伴''的意思。}\\
+6. {\PUAfont\symbol{"0100}}：\colorbox{orange!25}{和它有些对称的{\PUAfont\symbol{"0139}}在图2手稿中表示过去式（也可能是被动），那么它或许表示将来时态。}\\
+7. {\PUAfont\symbol{"012A}}：\colorbox{orange!25}{诺艾儿正确读出爱丽丝的名字时，她只用了这一个字回应，所以是``正确''。}\\
+8. {\PUAfont\symbol{"012F}}：\colorbox{red!25}{像是个被划掉的数字1，可能是``不止一个''，也可能是``连一个都没有''。}\\
+9. {\PUAfont\symbol{"013F}}：\colorbox{red!25}{与众不同的独体字，不知道是指黑洞魔法还是某种魔族（如污染体）。}\\
+10. {\PUAfont \symbol{"013D}}：\colorbox{orange!25}{这是{\PUAfont\symbol{"0110}}（表达）的部件，可能是要表达的``内容''。}\\
+11. {\PUAfont\symbol{"011B}}：\colorbox{green!25}{发音表指出其含义是``爱''。}\\
+12. {\PUAfont\symbol{"012C}}：\colorbox{green!25}{发音表指出其含义是``喜悦''。}\\
+13. {\PUAfont\symbol{"0117}}：\colorbox{green!25}{发音表指出其含义是``心''。}
+\subsection{其他词汇}
+1. {\PUAfont\symbol{"013B}}：之前有提过{\PUAfont\symbol{"0152}}可能是连系动词be，但语料中却是这个字符用得更多，可能一个是\colorbox{orange!25}{提示话题}而另一个是\colorbox{orange!25}{断定助动词}吧。
+
+2. {\PUAfont\symbol{"0137}}：\colorbox{green!25}{大量语料表明这个是``否定''（Not）。}
+
+3. {\PUAfont\symbol{"0139}}：\colorbox{green!25}{图2手稿指出这个符号表示过去式或被动。}
+
+4. {\PUAfont\symbol{"012E}}：\colorbox{red!25}{共出现两次，似乎是想强调句子的某个成分，相当于英语的``It is\ldots{}that\ldots{}''。}
+
+5. {\PUAfont\symbol{"011F}\symbol{"0100}\symbol{"012D}}：\colorbox{red!25}{这个短语非常棘手，第三个字符没有在别处出现。目前只能猜测为``尽快、趁早''。}
+
+6. {\PUAfont\symbol{"011A}}：\colorbox{red!25}{上方部件是``战斗''而下方是心形，可能表示``讨厌、憎恶、仇恨''等。}
+
+7. {\PUAfont\symbol{"012B}}：\colorbox{red!25}{看这个形状以及两个部件的含义，猜测是``是否''（whether or not、\textsf{かどうか}）。}
+
+8. {\PUAfont\symbol{"0131}}：\colorbox{red!25}{爱丽丝无路可逃时所说的词，猜测为``绝境、困局''。}
+
+9. {\PUAfont\symbol{"0133}}和{\PUAfont\symbol{"0134}}：\colorbox{orange!25}{可能性很多，表示因果、表示起止范围、表示充分或必要条件，都说不准。}
+
+10. {\PUAfont\symbol{"013E}}：\colorbox{red!25}{从形状来看可能是表示``目的''（in order to）。}
+
+11. {\PUAfont\symbol{"0142}}：\colorbox{orange!25}{本文附录中出现了和它上下对称且很可能表示``下''的字符，所以这个应该是``上''。}
+
+12. {\PUAfont\symbol{"0154}}：\colorbox{orange!25}{出现在附录中而不是0.29 WPE中，推测为方位词``下''。}
+
+13. {\PUAfont\symbol{"0144}}：只出现了一次且被{\PUAfont\symbol{"0149}}修饰，考虑到其左侧部件在图2手稿中表示``男性''的字符中出现过，\colorbox{red!25}{推测为``士官、卫兵''等战斗职业。}
+
+14. {\PUAfont\symbol{"0145}}：\colorbox{red!25}{出现在无路可逃时，猜测为``已经''，表示完成时态。}
+\clearpage
+\section{对话}
+本节整理出了流程中爱丽丝所有出场的剧情，对话以剧本形式呈现，小写字母表示的角色有：诺艾儿（n）、爱丽丝（a）、伊夏（i）、阿尔玛（l）、丽薇歌塔（v）。\\
+在第一处魔力残渣，诺艾儿描述了爱丽丝的瞳色。\\
+n: 这是……我能感觉到。是魔族留下的魔力的残渣。\\
+n: 那个红眼睛的女孩，一定是往前面逃走了。在魔力彻底消散之前，得在地图上留下标记才行。
+\addtocounter{subsection}{-1} % 从零开始编号
+\subsection{繁茂高原（02:04:45）}
+\noindent 在游戏第二章，诺艾儿在此处第一次遇到爱丽丝本人，爱丽丝的魔族宠物也在一起。\\
+n: （面向右）……！找到你了！\\
+a: （面向左，双手捂住下巴，惊恐）{\PUAfont\symbol{"0121}\symbol{"0111}\symbol{"0139}\symbol{"017F}}\colorbox{orange!25}{（有）}\colorbox{green!25}{精灵}\colorbox{orange!25}{靠近了！}\\
+爱丽丝向后跌坐在地并击中了一株魔力植物，魔法注册终端也从身上向左掉了出来。植物逸散的魔力为绿色，全部被宠物吸收。爱丽丝起身向左奔跑，蹲下捡起掉落的终端，转身继续向右逃走（宠物此时原地不动）。\\
+n: ………！？\\
+诺艾儿向右追赶，宠物也逃走了，此时触发了战斗点``繁茂高原''。\\
+n: 诶……等一下！明明不是我干的！\\
+战斗胜利后。\\
+n: ……那个女孩，明明摘了魔力植物，却完全没有被魔族盯上。\\
+n: 是她带着的那只幼犬型魔族让她免于攻击的吗…？还是说，那个女孩是…………。
+\subsection{细绳谜题（02:06:27）}
+\noindent 这个场景爱丽丝没有台词，她的宠物也不在场。诺艾儿跑向爱丽丝，爱丽丝看到她追过来了，向右俯身爬过了仅有一格高的窄缝，诺艾儿一边跑到窄缝的左侧蹲下一边向她喊话。\\
+n: 喂，等一下，我有话想问你！\\
+爱丽丝不理她，爬过窄缝后径直从沾着红色液体的细绳上跑掉了。\\
+n: 那么窄的洞穴，她居然这么轻松就钻过去了？而且在细绳上也跑得好快……可不能跟丢了，得赶紧从上面追过去。
+\subsection{狙击堡垒（02:07:20）}
+\noindent 就在细绳谜题的下一张地图，爱丽丝面朝左瘫坐在地，惊恐地看着拿着法杖走来的诺艾儿，同时向右滑下斜坡。\\
+a: {\PUAfont\symbol{"0135}\symbol{"0119}\symbol{"017E}\symbol{"0135}\symbol{"017E}\symbol{"017E}\symbol{"011E}\symbol{"0137}\symbol{"0111}\symbol{"017F}}\colorbox{orange!25}{啊……请（你）不要靠近！}\\
+爱丽丝从斜坡摔落倒在地上，并击中了一株魔力植物。植物的魔力为绿色，全部被诺艾儿吸收。\\
+诺艾儿向右奔跑追赶，爱丽丝起身向右上方做前空翻，落在宠物所在的路标牌处一起向右跑掉了，而诺艾儿又被如此触发的战斗点``狙击堡垒''拦了下来。\\
+n: 等、等等，又来……！？\\
+战斗胜利后。\\
+n: 呜、跟丢了……跑、跑得好快。\\
+伊夏坐着法杖飞了过来。\\
+i: 诺艾儿·柯涅尔！我听说了，有个疑似犯人的家伙正在到处逃跑！\\
+n: 啊、嗯……其实还不太清楚她到底是不是犯人……\\
+n: 不过，那个女孩似乎能驯服魔族，而且好像她采摘魔力植物也不会激怒魔族的样子……明显能感觉到，她的气息和我们不一样。\\
+i: 那准没错了！那肯定就是幕后黑手！昨天引来那么多魔族把街道折腾得乱七八糟的幕后黑手绝对也是她吧！\\
+i: 我已经叫我们班的同学来支援了，到时候大家把她包围起来\textbf{狠狠教训}一顿才行！\\
+n: 狠狠教训什么的还是有点过了吧……我觉得先捉住她、别让她继续逃跑，然后好好问清楚情况会比较好。\\
+i: （打响指）总之——我现在就从这条路过去！你也要小心点，可别被这附近的野生魔族袭击了哟！\\
+伊夏乘坐法杖向右飞去并跳进了洞窟。\\
+n: ……伊夏同学说得对，确实应该谨慎行动才行。那个女孩看起来是逃进前面的洞窟里了……\\
+n: 但要是就这么直接追上去，可能就正中她的下怀了。是不是该绕一圈从侧面靠近比较好呢……？
+\subsection{她在哭吗（02:14:21）}
+\noindent 在通过一处弹簧谜题后，诺艾儿再次追上了爱丽丝。爱丽丝先是面朝左侧、向右跌坐在地，然后起身一边向右跑走一边说话。\\
+a: {\PUAfont\symbol{"0118}\symbol{"0118}\symbol{"0118}\symbol{"0118}\symbol{"017F}\qquad\symbol{"0135}\symbol{"0119}\symbol{"0137}\symbol{"011D}\symbol{"0114}\symbol{"0118}\symbol{"017E}\symbol{"011E}\symbol{"0137}\symbol{"0111}\symbol{"017E}\symbol{"017F}}\\
+\colorbox{orange!25}{哇啊啊啊！……啊，不。}\colorbox{red!25}{我感到好害怕}\colorbox{orange!25}{，请你别再靠近了！}\\
+就在诺艾儿即将追上她，两人到达同一块碎木平台上时，爱丽丝的宠物突然出现（在上一张地图即弹簧谜题的长椅处也出现了）并发起攻击，摧毁了碎木平台让诺艾儿掉落在了下方另一个平台上，爱丽丝则趁机飞檐走壁逃到了梯子的开关处，但是在惊慌中蹲在梯子顶部的平台边缘看向诺艾儿并说了一句话。\\
+a: {\PUAfont\symbol{"0101}\symbol{"0148}\symbol{"0147}\symbol{"017F}\qquad\symbol{"011F}\symbol{"0100}\symbol{"012D}\symbol{"011E}\symbol{"0146}\symbol{"0126}\symbol{"0128}\symbol{"017F}}\\
+\textbf{由于上一句话的前三个字符都是斜体，且在爱丽丝的其他台词中也有出现，因此推断为宠物的名字。}\\
+第二句话则应该是对宠物的命令，\colorbox{red!25}{请赶快（跟我）离开}\colorbox{orange!25}{这里。}\\
+诺艾儿起身之前，宠物在低处逗留了一小会然后跑掉了。\\
+n: （起身）痛痛痛……摔到屁股了……\\
+n: 呜呜，明明就差一点点了\~{}！\\
+此时阿尔玛到达了梯子的开关处，在打开开关之前看向诺艾儿的方向并说话。\\
+l: 诺艾儿同学你没事吧……！？\\
+阿尔玛打开开关放下了梯子，诺艾儿爬上梯子后与之对话。\\
+n: 阿尔玛同学！刚才的那个女孩……！？\\
+l: 对、对不起……刚才那只幼犬型魔族突然跳了出来，我一慌神就让那女孩给跑掉了……\\
+l: 那个女孩，就是伊夏同学所说的……真正的犯人吗？\\
+n: 嗯，应该是这样……不过。\\
+n: （心想）那个女孩……是在哭吗？\\
+n: （心想）明明能够驱使魔族，却露出那么害怕的样子。难道她有……什么隐情？\\
+l: ……诺艾儿同学？\\
+n: 啊，嗯……快点去追上她吧。
+\subsection{圣光爆发（02:26:15）}
+\noindent 在获得了``不兼容的技能芯片''之后，诺艾儿通过另一处弹簧谜题回到了阿尔玛出现过的那张地图，操作加农炮打穿了两道障碍。接着向右下角前进至深处遇到爱丽丝，她看向诺艾儿，急得直冒汗。\\
+n: 差不多得了……快点乖乖投降吧！\\
+a: {\PUAfont\symbol{"0135}\symbol{"0119}\symbol{"017E}\symbol{"014A}\symbol{"0121}\symbol{"0107}\symbol{"011A}\symbol{"017F}\qquad\symbol{"0106}\symbol{"011D}\symbol{"0106}\symbol{"010C}}{\PUAfont \symbol{"011F}\symbol{"0100}\symbol{"012D}\symbol{"017F}}\\
+\colorbox{orange!25}{啊}\colorbox{green!25}{，那个精灵}\colorbox{red!25}{（又）追过来了，可恶！（对宠物说）快帮}\colorbox{green!25}{我}\colorbox{orange!25}{想个办法！}\\
+爱丽丝说完又向右跑走了，诺艾儿追到下一张地图，这里是真正的死路。爱丽丝站在独木桥上面向左侧，身后是岩壁。\\
+a: （惊恐、瞳孔放大）{\PUAfont\symbol{"0119}\symbol{"0135}\symbol{"017E}\symbol{"017F}\qquad\symbol{"0145}\symbol{"017E}\symbol{"012F}\symbol{"017E}}\\
+\colorbox{orange!25}{啊……已经，没有（路了）……}\\
+爱丽丝环顾左右，然后跌坐在独木桥上，一边说话一边双手背在身后慢慢向右爬着后退，直到靠在岩壁上才站起来，看着一步步走上独木桥用法杖指着她的诺艾儿。\\
+a: （紧闭双眼，满头大汗）{\PUAfont\symbol{"0130}\symbol{"011C}\symbol{"017E}\qquad\symbol{"011E}\symbol{"0108}\symbol{"011D}\symbol{"017E}\symbol{"017E}\symbol{"011D}\symbol{"0131}\symbol{"0133}\symbol{"010B}\symbol{"0126}\symbol{"0128}\symbol{"017E}\symbol{"017E}}\\
+\colorbox{orange!25}{（你是）谁……}\footnote{也可能是像诺艾儿一样的``谁（来救救我……）''。}\colorbox{orange!25}{请}\colorbox{red!25}{和平对待}\colorbox{green!25}{我……}\colorbox{red!25}{不然我会}\colorbox{green!25}{在这里杀了}\colorbox{red!25}{你……}\\
+n: 走投无路了吧……你已经逃不了了！\\
+n: 没关系的。只要你乖乖配合，我是不会伤害你的。放下武器，好吗？\\
+a: （哭腔）{\PUAfont\symbol{"017E}\symbol{"017E}\symbol{"017E}\symbol{"017E}\symbol{"017E}\symbol{"017E}\symbol{"017E}\qquad\symbol{"0101}\symbol{"0148}\symbol{"0147}\symbol{"017F}\symbol{"017F}}\\
+爱丽丝别无选择，再次召唤出了宠物。宠物使用了必杀技，把诺艾儿重重地压在了独木桥上。\\
+n: 呃……！喘、喘不过气……！\\
+a: （向左跑了几步）{\PUAfont\symbol{"0135}\symbol{"017E}\symbol{"011E}\symbol{"0109}\symbol{"017F}\qquad\symbol{"011E}\symbol{"0137}\symbol{"010A}\symbol{"012E}\symbol{"0129}\symbol{"017E}\symbol{"017F}}\\
+\colorbox{green!25}{啊……请忍耐一下！请不要反抗，}\colorbox{red!25}{那很危险……！}（``忍耐''出自图2手稿）\\
+a: {\PUAfont\symbol{"0103}\symbol{"0104}\symbol{"0120}\symbol{"010C}\symbol{"014A}\symbol{"0121}\symbol{"017E}\qquad\symbol{"0102}\symbol{"0130}\symbol{"0127}\symbol{"0106}\symbol{"0105}\symbol{"011D}}\\
+\colorbox{red!25}{难道这个精灵是冲着你（宠物）来的！？是想对我们做什么？}\\
+\textbf{这是字符}{\PUAfont\symbol{"0102}}\textbf{首次出现，已经确认这是问号。矮人文的疑问句（部分或全部）会把问号放在句首。}\\
+n: （心想）大意了……这家伙，不只是普通的幼犬型魔族……？\\
+爱丽丝的宠物还在不断攻击诺艾儿。\\
+n: （心想）呜、好痛……看来挣脱不掉了。那就……只能这样了……!\\
+玩家操作诺艾儿施展了``圣光爆发''（等待按键期间会受到HP和MP伤害，如果一直不操作会怎样？）\\
+爱丽丝的宠物被震开并变回小球形态，但是独木桥也裂开了，她们俩（宠物也有概率一起）掉了下去。\\
+n: 糟了……！\\
+a: {\PUAfont\symbol{"0119}\symbol{"0135}\symbol{"0135}\symbol{"0135}\symbol{"0135}\symbol{"0135}\symbol{"017F}}\colorbox{orange!25}{啊啊啊……！}\\
+爱丽丝的这句台词显然是在大叫，也就是说这里前两个字符都是表音的，\textbf{最后一个字符则是感叹号}。
+\subsection{找到终端（02:28:28）}
+\noindent 坠入洞窟的二人倒在地上，诺艾儿先醒了过来。\\
+n: 呜！痛痛痛……\\
+n: （起身）法杖！我的法杖在哪里！？法杖快飞回来——！\\
+法杖从右侧飞回到诺艾儿的左手。\\
+n: （闭眼、心想）呼——\\
+n: （转身看向高处、心想）还好……身体没怎么受伤。不过，这个洞确实好深啊，一不留神就从那么高的地方摔下来了……\\
+n: （看向右侧的地面，发现魔力植物）这个洞穴，或许是魔族凿出来的……得小心不能发出太大的声音，把魔族引出来了就糟了……\\
+诺艾儿向左跑到尽头，看到倒地的爱丽丝。\\
+a: （意识不清）{\PUAfont\symbol{"0118}\symbol{"0118}\symbol{"0118}\symbol{"017E}\symbol{"017E}}\colorbox{red!25}{唔唔唔……}\\
+a: （苏醒，跪坐起来，双眼紧闭）{\PUAfont\symbol{"013A}\symbol{"017E}\symbol{"017E}\symbol{"0119}\symbol{"0135}\symbol{"0135}\symbol{"017E}\symbol{"017E}}\colorbox{red!25}{呃……啊……}\\
+n: 你、你没事吧？不、不对，这不是重点……你现在无路可逃了吧，所以，终端呢？你把它藏在哪里了？\\
+爱丽丝一下子明白了诺艾儿为什么对她穷追不舍，一边用刚才在独木桥上的爬行动作向左退到尽头，一边回答。\\
+a: （疑惑）{\PUAfont\symbol{"0119}\symbol{"0135}\symbol{"0135}\symbol{"017E}\symbol{"017E}\symbol{"017F}\qquad\symbol{"0102}\symbol{"0130}\qquad\symbol{"0102}}终端……\qquad\colorbox{orange!25}{啊……什么？终端……？}\\
+\textbf{字符}{\PUAfont\symbol{"0130}}\textbf{几乎总是在问号之后出现，暂时推断为疑问代词的公共成分。}\\
+a: （疑惑）{\PUAfont\symbol{"0137}\symbol{"017F}\qquad\symbol{"0137}\symbol{"011E}\symbol{"0137}\symbol{"0111}\symbol{"017F}}\colorbox{orange!25}{不！不要！别靠近（我）！}\\
+\textbf{字符}{\PUAfont\symbol{"0137}}\textbf{在这句话中多次出现，甚至可以单独成句，暂时推断为否定。}\\
+n: 别再逃了，好吗？终端在哪里？我就是为了找那个才来的！\\
+a: （紧张）{\PUAfont\symbol{"0137}\symbol{"017E}\symbol{"017E}\symbol{"017F}}\colorbox{orange!25}{不……！}\\
+尽管嘴上仍在否认，但在经过片刻的激烈思想斗争后，爱丽丝下定了决心，伸手指向诺艾儿身后。\\
+a: {\PUAfont\symbol{"0135}\symbol{"0146}\symbol{"011E}\symbol{"010D}\symbol{"0132}\symbol{"017F}}\colorbox{orange!25}{啊，请看那边！}\\
+n: 诶，后面？你是指后面有什么东西吗…………啊——\\
+镜头移动到右侧，终端果然在那边的地面上，但诺艾儿并没有回头。\\
+n: （心想）对了，我记得……这个女孩子驯服了一只魔族的样子，得小心，不能把视线移开……\\
+n: 好险好险……我可不会上你的当！\\
+a: （满头大汗>\_<）{\PUAfont \symbol{"011D}\symbol{"0139}\symbol{"0107}\symbol{"0125}\symbol{"017F}\qquad\symbol{"011D}\symbol{"0139}\symbol{"0110}\symbol{"0134}\symbol{"011D}\symbol{"0139}\symbol{"0107}\symbol{"017F}}\\
+\colorbox{orange!25}{我找到那个了！我告诉你是因为我找到那个了！}\\
+玩家操作诺艾儿向左移动，调查仍然伸着手的爱丽丝。（如果直接向右移动去捡终端会怎么样？）\\
+a: （拼命辩解）{\PUAfont\symbol{"0132}\symbol{"011E}\symbol{"010D}\symbol{"0132}\symbol{"017F}\qquad\symbol{"0132}\symbol{"011E}\symbol{"010D}\symbol{"0132}\symbol{"017F}}\colorbox{orange!25}{在那边，请看看那边啊！}\\
+n: （疑惑）……？\\
+玩家操作诺艾儿去右侧捡起\textbf{被盗走的注册终端}。（其图标只有颜色不同于``不兼容的技能芯片''）\\
+n: …还真是掉在这里了。算了，至少被盗走的终端算是顺利找回来了……\\
+n: 这个注册终端（Installer），好像没有开启任何安全认证功能，任何人都能随便完成注册呢……得保管好才行，可不能让它意外启动了…\\
+玩家再次操作诺艾儿向左移动靠近爱丽丝，此时爱丽丝已经站起，她先是环顾四周，然后背对着诺艾儿一边讲话一边后退几步再蹲下。\\
+a: {\PUAfont\symbol{"0135}\symbol{"017E}\symbol{"017E}\symbol{"0119}\symbol{"0135}\symbol{"017E}\symbol{"017E}\qquad\symbol{"0102}\symbol{"0130}\symbol{"0128}\symbol{"013B}\symbol{"0101}\symbol{"0148}\symbol{"0147}}\colorbox{green!25}{啊……啊……【宠物的名字】在哪里？}\\
+这两句话中，第一句的字符和之前摔落时一样是表音的。第二句非常重要，出现了宠物的名字，结合开头的问号和疑问代词来推断，\textbf{短语}{\PUAfont\symbol{"0130}\symbol{"0128}}\textbf{的意思是``何处''，而字符}{\PUAfont\symbol{"013B}}\textbf{则可能是连系动词（英语的be）。}\\
+爱丽丝找不到宠物，急得跪在地上直哭。\\
+a: {\PUAfont\symbol{"011D}\symbol{"0106}\symbol{"014A}\symbol{"0123}\symbol{"017E}\symbol{"017E}}\colorbox{red!25}{我好想它……}\\
+诺艾儿跳上台阶靠近爱丽丝，同时爱丽丝起身后退试图和她保持距离。\\
+n: （疑惑）听不太懂你在说什么，不过……\\
+n: （疑惑）莫非，这个地方会坍塌也是你设下的陷阱？你是在故意把我引到这块快塌陷的地面上的吗？\\
+a: （双手捂住下巴，略带紧张）{\PUAfont\symbol{"0102}\symbol{"0130}\symbol{"013C}\symbol{"0110}\symbol{"0120}\qquad\symbol{"012E}\symbol{"0125}\symbol{"017E}\symbol{"011D}\symbol{"0106}\symbol{"0101}\symbol{"0148}\symbol{"0147}\symbol{"0134}\symbol{"013B}\symbol{"0136}\symbol{"017E}}\\
+\colorbox{orange!25}{你在说什么啊？}\colorbox{red!25}{那是……我想念【宠物的名字】是因为（我们）是伙伴啊……}\\
+n: 是你把那么多魔族引到学校那边的吗？\\
+a: （又坐在地上哭了）{\PUAfont\symbol{"0125}\symbol{"0123}\symbol{"0137}\symbol{"013B}\symbol{"0136}\symbol{"017E}\qquad\symbol{"0135}\symbol{"017E}\symbol{"011D}\symbol{"0106}\symbol{"0107}\symbol{"0125}\symbol{"0123}\symbol{"017E}}\\
+（假设她听懂了诺艾儿的问话）\colorbox{red!25}{它（宠物）已经不在我身边了……啊……我想要找到它……}\\
+诺艾儿不为所动，继续向她靠近，她再次吓得面向诺艾儿爬着后退。\\
+n: （用法杖指着爱丽丝）虽然不知道你为什么会这么慌张……但我可不会再放松警惕了！\\
+爱丽丝退到尽头，扭过脸不愿看诺艾儿。\\
+a: （尖叫）{\PUAfont\symbol{"0137}\symbol{"0130}\symbol{"0134}\symbol{"017E}\symbol{"017E}\symbol{"0118}\symbol{"0118}\symbol{"017F}\symbol{"011D}\symbol{"0112}\symbol{"0118}\symbol{"017F}\qquad\symbol{"011D}\symbol{"0112}\symbol{"0118}\symbol{"011D}\symbol{"0112}\symbol{"0118}\symbol{"0134}\symbol{"0120}\symbol{"017F}}\\
+\colorbox{orange!25}{不，为什么……哇啊！离我远点！你离我远点啊！}\\
+n: （惊慌）等、等一下，别那么大声！\\
+n: （惊慌）我只是想问你几件事而已，能不能跟我一起去贝尔米特呢？\\
+a: （抽泣）{\PUAfont\symbol{"0119}\symbol{"0135}\symbol{"017E}\symbol{"017E}\symbol{"011D}\symbol{"0112}\symbol{"0118}\symbol{"017E}\symbol{"017E}\qquad\symbol{"011D}\symbol{"0112}\symbol{"0118}\symbol{"0118}\symbol{"0118}\symbol{"017E}\symbol{"017E}}\\
+\colorbox{orange!25}{呜呜……别碰我……别碰我啊……}\\
+n: ……
+\subsection{童年回忆（02:31:05）}
+\noindent 看着不知所措的爱丽丝，诺艾儿想到了小时候被姐姐救下的经历。\\
+n: 一、二、三…嘿咻！哇，采到了！采到了好多蘑菇！\\
+n: 算上这些，姐姐让我帮忙采集的东西就只剩下……\\
+n: （不小心摔了一跤）哇啊！\\
+n: …哇啊！…摔得好痛……\\
+n: （触发了战斗）糟了，是魔力植物………\\
+没戴帽子的诺艾儿跌坐在地上，一只魔族缠住了她的脚踝，另一只魔族爬上了她的头顶。\\
+n: 啊、呜啊……！\\
+n: （受到伤害）别过来，别靠近我……\\
+n: （受到伤害）啊啊啊……！\\
+n: 不要啊……好可怕！救命啊！姐姐！姐姐快来救我！\\
+v: （丢出炸弹秒杀了魔族们）喝呀！！\\
+诺艾儿得救了，一下子扑到姐姐怀里大哭起来。\\
+v: 诺艾儿，你没事吧？\\
+n: 姐…姐姐——！呜哇啊啊啊啊啊啊——！\\
+v: …是我不好呢。把诺艾儿孤零零地丢在这里，我这个姐姐不够称职呢。\\
+v: 吓到你了吧？乖哦\~{}姐姐我把魔族打跑了，已经没事了哦。\\
+v: 诺艾儿做得很好哦，帮我采集到了这么多素材，真是个乖孩子\~{}\\
+n: 嗯………呜呜呜……………\\
+结束了回忆的诺艾儿把指着爱丽丝的法杖收回了一些。\\
+n: （心想）要是伤害她的话……那我不就成了……\\
+右上角突然飘来一堆白色丝线，把爱丽丝抓走了。\\
+a: {\PUAfont\symbol{"0137}\symbol{"017F}}\colorbox{green!25}{不要！}\\
+n: ！？\\
+诺艾儿连忙向右跑到被瞬间裹成茧的爱丽丝下方。\\
+n: （心想）糟了，这个洞穴里住着的魔族回来了……！\\
+a: （挣扎）{\PUAfont\symbol{"011E}\symbol{"0137}\symbol{"0105}\symbol{"017F}\symbol{"017F}\qquad\symbol{"011E}\symbol{"0112}\symbol{"0146}\symbol{"011D}\symbol{"017F}\symbol{"017F}}\colorbox{orange!25}{请别（对我这么）做！！放我出来！！}\\
+n: （心想）难缠的大型魔族出现了…！糟了…该怎么办……！？\\
+n: （心想）……不能输。这次，我有绝对不能输的理由。\\
+n: （心想）…原本就要回收这个东西的，事发突然，不得不紧急避险了——\\
+n: III级--F班，诺艾儿·柯涅尔，申请使用注册终端（Installer）以消灭大型魔族！\\
+终端飘到了空中，玩家调查它即可注册新魔法``引力黑洞''。\\
+n: 这个是城里的保卫战那会儿蒂格蕾娜在用的招式……\\
+n: 这个魔法能召唤出一个小型引力场，从而\textbf{将小型魔族和弹射物统统吸入其中}。\\
+n: 怪物，放马过来吧…！我可绝对不会输给你的！
+\subsection{引力黑洞（02:35:08）}
+\noindent 击败大型魔族后，诺艾儿尝试蹲在旁边唤醒倒在地上的爱丽丝。\\
+a: （不清醒地）{\PUAfont\symbol{"0149}\symbol{"0144}\symbol{"017E}\symbol{"017E}\qquad\symbol{"011D}\symbol{"012B}\symbol{"0137}\symbol{"0113}\symbol{"012E}\symbol{"0129}\symbol{"017E}\symbol{"017E}}\\ \colorbox{red!25}{（你真是个）优秀的战士……我大概不再危险了……}\\
+随后，爱丽丝突然醒来，坐在地上面对诺艾儿向后爬行几步后站起，双手举在空中保持戒备，同时诺艾儿也向后慢慢退开。\\
+a: {\PUAfont\symbol{"017F}}\colorbox{green!25}{！}\\
+n: （收起法杖，微笑）……别担心。我不会攻击你的。\\
+a: （放松，疑惑）{\PUAfont\symbol{"0102}\symbol{"0120}\symbol{"0137}\symbol{"010B}\symbol{"011D}\qquad\symbol{"0102}\symbol{"017E}\symbol{"017E}\symbol{"0130}\symbol{"0143}}\colorbox{green!25}{你不伤害我？……为什么？}\\
+这是两个疑问句，其中字符{\PUAfont\symbol{"010B}}与手稿中表示``杀''的字符非常相似，因此推断为``攻击、伤害、杀死''这类意思。根据前言中``矮人语的基本语序是主谓宾''，作出如此解读。同时也可以合理推测\textbf{所有``左侧偏旁是这个旗子形状''的字符都是人称代词}。\\
+n: 刚才跟那个大块头的战斗中，我隐约有一种感觉……那家伙是因为我侵入了它的领地才来攻击我的吧。\\
+n: 换句话说，并不是你把它引到这里来的，对吧？\\
+n: 所以，我们先一起想想办法，看看怎么从这个洞里出去吧。\\
+a: （微笑）{\PUAfont\symbol{"017E}\symbol{"017E}}\\
+爱丽丝向右跑去，诺艾儿转身试图叫住她，但并没有再第一时间追上去。\\
+n: 哎，等等！\\
+片刻之后，右侧尽头的岩壁旁从上面放下来一道梯子。\\
+n: 啊，好厉害……飞檐走壁一下子就爬上去了哎。
+\subsection{互相介绍（02:35:47）}
+\noindent 诺艾儿爬上了梯子，爱丽丝就在上面蹲着等她而没有直接跑掉。\\
+n: （微笑）谢谢你救了我。重新介绍一下，我是诺艾儿。\\
+爱丽丝起身环顾四周，似乎听到了什么声音，然后一边向右跑一边再次叫出宠物的名字，看来是找到了。\\
+a: {\PUAfont\symbol{"0101}\symbol{"0148}\symbol{"0147}\symbol{"017F}}\\
+诺艾儿慢慢跟了过去，看到爱丽丝蹲在地上抚摸着宠物。宠物见到诺艾儿就向她靠近了一些并做出威慑动作，诺艾儿本能地拿起法杖戒备着。爱丽丝起身向左走到宠物的位置，再次蹲下来安抚它。\\
+a: {\PUAfont\symbol{"0101}\symbol{"0148}\symbol{"0147}\symbol{"013B}\symbol{"012F}\qquad\symbol{"014A}\symbol{"0121}\symbol{"0137}\symbol{"013B}\symbol{"0122}\symbol{"017E}\symbol{"011D}\symbol{"0114}}\\
+形式上这是两个判断句，分别是肯定和否定形式。已知字符{\PUAfont\symbol{"0121}}的含义是``精灵、编织者''，如果把这两句话理解为爱丽丝对宠物的命令，那么可以解读为：\\
+\colorbox{orange!25}{{\PUAfont\symbol{"0101}\symbol{"0148}\symbol{"0147}}，住手（或者``没事的''）。我感觉……这个精灵不是敌人。}\\
+宠物安静了下来，静静地呆在爱丽丝身后，爱丽丝起身友好地面向诺艾儿，诺艾儿收起法杖慢慢前进，此时出现了新的背景音乐。\\
+n: （微笑）……那只小家伙，对你来说一定很重要吧。\\
+a: {\PUAfont\symbol{"0102}\symbol{"017E}\symbol{"017E}}\colorbox{green!25}{……？}\\
+爱丽丝并没有听懂诺艾儿的意思。\\
+n: 我叫诺艾儿，你呢？\\
+a: （若有所思）{\PUAfont\symbol{"0102}\symbol{"0126}\symbol{"0121}\symbol{"0110}\symbol{"0115}\symbol{"013E}\symbol{"013D}\symbol{"017E}\symbol{"017E}}\qquad……我……？\\
+\colorbox{orange!25}{这个精灵在询问什么信息吗？……\textsf{わたし}……？}\\
+这个疑问句的生字比较多，并且爱丽丝错误地把代词``我''（\textsf{ワタシ}）当成了关键信息。\\
+n: （闭眼微笑）诺艾儿，诺、艾、儿，记住了吗？\\
+a: ……诺、艾、儿？\\
+n: 嗯。诺艾儿。\\
+a: （微笑）{\PUAfont\symbol{"017E}\symbol{"017E}\symbol{"011B}\symbol{"010F}\symbol{"0138}}\colorbox{green!25}{……（我叫）爱丽丝。}\\
+这句话是她的名字，三个字\textbf{都是斜体}。日语人名中的\textsf{愛}字常读作\textsf{あ}，这个字在矮人语中保留了心字底。\\
+n: 爱丽丝……原来你的名字叫爱丽丝啊。\\
+a: （眼前一亮）{\PUAfont\symbol{"017E}\symbol{"017E}\symbol{"012A}\symbol{"017F}}\colorbox{orange!25}{……对，是的！}
+\subsection{义释幽灵（02:36:41）}
+\noindent 诺艾儿的法杖收到了伊夏的通讯。\\
+i: （带有噪音）诺艾儿·柯涅尔！诺艾儿·柯涅尔！能听到吗？请回应！诺艾儿·柯涅尔！\\
+n: 啊……是伊夏同学的声音！看来通讯又恢复了。\\
+n: （向左走了几步，背对着爱丽丝）这里是诺艾儿·柯涅尔！我已经夺回被盗的装置了…………\\
+a: {\PUAfont\symbol{"0102}\symbol{"017E}\symbol{"017E}}（这句在视频中是``……？''，推测为作者笔误）\\
+诺艾儿转身走回刚才站的位置。\\
+n: （心想）该怎么办呢……这个女孩。她既不是精灵，也不是兽人，而且完全听不懂我的话……\\
+n: （心想）虽然看起来没有敌意，但我能就这样带她回去吗？也许，应该让她留在这里安静地待着才对……\\
+此处游戏会有选项``释放''或``逮捕''，不过在0.29 WPE中只能选择释放。\\
+n: （退后一点，心想）……还是让她走吧。总觉得现在不该把她带走呢。未来，肯定会再见面的，更友好、也更和平的见面。\\
+a: {\PUAfont\symbol{"0102}\symbol{"017E}\symbol{"017E}}\colorbox{green!25}{……？}\\
+n: 啊……那个，有人来了，快从这里离开！\\
+a: {\PUAfont\symbol{"0102}\symbol{"0130}}\colorbox{green!25}{什么？}\\
+n: （心想）她、听不懂。必须用手势来传达……\\
+诺艾儿一边在原地做出奔跑、跳起、蹲下、挥舞法杖的动作，一边认真地命令爱丽丝。\\
+n: 立刻、从这里、离开。\\
+a: {\PUAfont\symbol{"017E}\symbol{"017E}\symbol{"017E}}\\
+爱丽丝静静地看着她的动作，随后突然哈哈大笑。\\
+a: {\PUAfont\symbol{"012C}\symbol{"0117}\symbol{"0117}\symbol{"0117}\symbol{"017F}\qquad\symbol{"0102}\symbol{"0130}\symbol{"013C}\symbol{"0110}\symbol{"0120}}\colorbox{orange!25}{唔哈哈哈！你在表达什么意思啊？}\\
+不过这样一来，难道矮人语的疑问句是整句倒装的吗？\\
+n: （心想）被嘲笑了！？\\
+n: （立绘多次变化）有人，来了，快，逃！\\
+a: （思考）{\PUAfont\symbol{"0120}\symbol{"010D}\symbol{"0106}\symbol{"010E}\symbol{"013F}\qquad\symbol{"011D}\symbol{"010F}\symbol{"017E}\symbol{"017E}\symbol{"0120}\symbol{"0137}\symbol{"0114}\symbol{"0116}}\\
+\colorbox{red!25}{你们看上去是要拿回黑洞魔法啊。我理解了……你感觉（这里）不安全。}\\
+a: （思考）{\PUAfont\symbol{"014A}\symbol{"0121}\symbol{"0110}\symbol{"0130}\symbol{"0118}\symbol{"017E}\symbol{"017E}\qquad\symbol{"0142}\symbol{"013D}\symbol{"011D}\symbol{"0113}\symbol{"011F}\symbol{"0142}\symbol{"0100}\symbol{"014A}\symbol{"0137}\symbol{"013B}\symbol{"013D}\symbol{"0126}\symbol{"0121}}\\
+\colorbox{orange!25}{这个精灵是想表达这些吧……（前半句无法解读），那些（追捕者）不是这个精灵带来的。}\\
+a: （思考）{\PUAfont\symbol{"0104}\symbol{"012A}\symbol{"017E}\symbol{"017E}\qquad\symbol{"0102}\symbol{"0126}\symbol{"0121}\symbol{"0110}\symbol{"0130}\symbol{"011C}\symbol{"0121}\symbol{"0111}}\colorbox{orange!25}{难道不对吗！？……这个精灵想表达有其他精灵要来了？}\\
+i: （没有噪音）我可担心死了，真是的！等着，我已经叫增援了，我也马上去你那边——！\\
+n: （惊慌）快点！再过不久，其他人就过来了！\\
+a: （后退到宠物的位置）{\PUAfont\symbol{"0120}\symbol{"0110}\symbol{"0139}\symbol{"010C}\symbol{"011D}\symbol{"017E}\symbol{"017E}\qquad\symbol{"0106}\symbol{"0111}\symbol{"0100}\symbol{"010D}\symbol{"011D}\symbol{"0120}}\\
+\colorbox{orange!25}{你说的话我理解了……相信你我将来还会见面的。}\\
+a: （微笑）{\PUAfont\symbol{"0119}\symbol{"010C}\symbol{"010C}}\colorbox{green!25}{（轻声笑）}\\
+爱丽丝又后退了一步，停留片刻后转身带着宠物一起跑掉了。\\
+n: （目送爱丽丝消失后，前进几步）…终于肯走了呢。\\
+爱丽丝的最后这几段话是解读的重难点，关乎两人下次能否顺利见面。
+\appendix
+\section{番外}
+游戏的中文代理方在2025年12月放出了一张预告截图\footnote{链接为 \url{https://www.bilibili.com/opus/1142615271034322946} .}，并说这是两人之间``友好的交流''（但是其中爱丽丝的对话框标题并不是她的名字，估计是为了避免剧透）。\\
+n: \textsf{これ……どう思う？}\colorbox{green!25}{这个……（你）怎么想？}\\
+a: {\PUAfont\symbol{"0102}\symbol{"0126}\symbol{"0120}\symbol{"0151}\symbol{"0154}\symbol{"017E}\symbol{"017E}}\colorbox{orange!25}{这（是）你（的）内裤……？}\\
+新出现的{\PUAfont\symbol{"0154}}和之前的{\PUAfont\symbol{"0142}}是上下对称的，所以应该是方位词``上、下''，整句话的最后两个字是\textsf{下着}。
+\begin{center}\includegraphics[scale=0.4]{Figs/Others/shitagi.png}\end{center}
+
+总之，矮人语的解读过程十分有趣，同时也具有很强的挑战性。我们的结果虽然称不上漏洞百出，但肯定有不少错误，希望读者谅解。不过比起最终的结果，对我们而言，享受过程才是最重要的。不得不承认，逆向技术在破译中起到的作用有些过于强大了，说是作弊也不为过，毕竟想想就知道如果0.28实装的是全部150个容易输入的平假名和片假名而不只是那15个，破译效率不说提高十倍吧至少也会提高五倍。幸好0.29 WPE是以视频而不是程序文件的形式公开的，因此八九成的内容都是靠我们自己推理。如果不借助0.27和0.28的逆向成果而仅靠视频，不知道我们还能否得出这么完整和准确的破译结果呢。或许游戏作者提前放出手稿和一成的对照关系，也是想把破译难度控制在一个恰到好处的水平吧。
+\clearpage
+\section{贡献者名单}
+\vspace{1em}\hrule\vspace{1em}\noindent
+\begin{minipage}{0.2\textwidth}\centering\includegraphics[width=100pt,height=100pt]{Figs/Authors/DreamRuthenium.jpg}\end{minipage}
+\hfill
+\begin{minipage}{0.75\textwidth}
+\textbf{ID:} \texttt{Dream\_Ruthenium}\\
+本次分析工作组的组长，在日留学生。负责视频中出现的所有矮人语字符的点阵字体设计，以及统筹全组工作并撰写分析报告的非中文版。\\
+\url{https://x.com/DreamRuthenium}
+\end{minipage}
+
+\vspace{1em}\hrule\vspace{1em}\noindent
+\begin{minipage}{0.2\textwidth}\centering\includegraphics[width=100pt,height=100pt]{Figs/Authors/普莉姆拉老师.png}\end{minipage}
+\hfill
+\begin{minipage}{0.75\textwidth}
+\textbf{ID:} \textsf{イクチュ}（普莉姆拉老师）\\
+工作组的逆向工程负责人，因为擅长\LaTeX 所以也负责撰写分析报告的中文版。她通过对0.27和0.28的逆向分析得到了关于矮人语的很多一手证据材料，如果你要在0.29中用矮人语来自定义对话，找她帮忙准没错。\\
+\url{https://space.bilibili.com/399329257}
+\end{minipage}
+
+\vspace{1em}\hrule\vspace{1em}\noindent
+\begin{minipage}{0.2\textwidth}\centering\includegraphics[width=100pt,height=100pt]{Figs/Authors/苍木羽Muki.png}\end{minipage}
+\hfill
+\begin{minipage}{0.75\textwidth}
+\textbf{ID:} 苍木羽\hspace{0pt}\texttt{Muki}\\
+工作组中负责游戏剧情和世界观设定的考证家，同人弹幕游戏《东方梦摇篮》作者。他/他们收集了视频里的中文对话截图，通过对剧情的分析提出了很多单从语言学角度无法直接得到的结论，对破译工作有很大帮助。\\
+\url{https://space.bilibili.com/332720975}
+\end{minipage}
+
+\vspace{1em}\hrule\vspace{1em}\noindent
+\begin{minipage}{0.2\textwidth}\centering\includegraphics[width=100pt,height=100pt]{Figs/Authors/Sheep-realms.png}\end{minipage}
+\hfill
+\begin{minipage}{0.75\textwidth}
+\textbf{ID:} \texttt{Sheep-realms}\\
+工作组的字符监制，\textit{Alice In Cradle}官方Wiki的重要编辑人。他/她对视频中的对话截图进行了字符的初步整理和分类，提出了偏旁和词性之间的关系，奠定了破译工作的基石。\\
+\url{https://space.bilibili.com/43881503}
+\end{minipage}
+
+\vspace{1em}\hrule\vspace{1em}\noindent
+\begin{minipage}{0.2\textwidth}\centering\includegraphics[width=100pt,height=100pt]{Figs/Authors/星文_whrite.png}\end{minipage}
+\hfill
+\begin{minipage}{0.75\textwidth}
+\textbf{ID:} 星文\hspace{0pt}\texttt{\_whrite}\\
+工作组的一位语料破译人员，提出了部分字符的含义。\\
+\url{https://space.bilibili.com/1818237152}
+\end{minipage}
+
+\vspace{1em}\hrule\vspace{1em}\noindent
+其他贡献者：LSAN.Alice.Cecilia、Lsoda、浮岁、\textsf{音理猫猫}。
+\end{document} % 正文结束
