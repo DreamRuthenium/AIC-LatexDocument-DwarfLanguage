@@ -1,6 +1,9 @@
 # AIC-LatexDocument-DwarfLanguage
-An Overleaf+Latex project file which displays the interpolation result of an artificial Language in the game named "Alice in Cradle"
+An Overleaf+Latex project file which displays the interpolation result of an artificial Language in the game named "Alice in Cradle".
 
+We used [bitsnpicas](https://github.com/kreativekorp/bitsnpicas), which is a very useful open-source project, to draw all dwarf language symnbols.
+
+File structure:
 ```
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % File structure
